@@ -23,11 +23,11 @@ After deploying Windows 365 (Day 1), administrators shift focus to ongoing opera
 
 Continuous monitoring provides the foundation for all Day 2 operations. Windows 365 provides built-in reporting through the Microsoft Intune admin center and Endpoint Analytics.
 
-### Cloud PC monitoring (preview)
+### Monitor Cloud PCs (preview)
 
 Cloud PC Monitoring provides IT admins with enhanced visibility into Cloud PC health, performance, and configuration through integrated dashboards.
 
-**Access**: Sign in to the [Microsoft Intune admin center](https://go.microsoft.com/fwlink/?linkid=2109431) > **Reports** > **Cloud PC monitoring (preview)**.
+**Access**: Sign in to the [Microsoft Intune admin center](https://go.microsoft.com/fwlink/?linkid=2109431) > **Reports** > **Monitor Cloud PCs (preview)**.
 
 The monitoring experience is organized into three tabs:
 
@@ -130,7 +130,7 @@ Windows 365 includes built-in alert rules for the following conditions. Alert se
 
 | Channel | Behavior |
 |---------|----------|
-| Console notification | Pop-up alerts in the Intune admin center (enabled by default) |
+| Portal pop-up | Pop-up alerts in the Intune admin center (enabled by default) |
 | Email notification | Sends one email per trigger event to designated addresses; sends again after resolution if re-triggered |
 
 ### Recommended alerting strategy
