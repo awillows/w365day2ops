@@ -509,9 +509,9 @@ Windows 365 supports a comprehensive set of remote actions for managing Cloud PC
 | Action | Bulk support | Use case |
 |--------|:------------:|----------|
 | Restart | Yes | Resolve performance issues, apply pending updates |
-| Restore | Yes | Roll back to a known-good state after an incident |
+| Restore | Yes | Roll back to a known-good state after an incident; changes made after the restore point are lost |
 | Resize | Yes | Address performance issues by scaling CPU/RAM |
-| Reprovision | Yes | Full reset to resolve persistent issues |
+| Reprovision | Yes | Last resort only. Deletes the Cloud PC, including all user data, apps, and settings, and builds a new one from the current provisioning policy |
 | Collect diagnostics | Yes | Gather logs for troubleshooting |
 | Place under review | Yes | Preserve Cloud PC state for investigation or compliance |
 | Troubleshoot | Yes | Run connectivity health checks |
@@ -535,10 +535,13 @@ Connection issue? → Run Troubleshoot action → Review health check results
      ↓
 Performance issue? → Check Resource Performance report → Resize if needed
      ↓
-Persistent issue? → Create manual restore point → Restore to known-good state
+Persistent issue? → Create manual restore point → Restore to known-good state (changes after restore point lost)
      ↓
-Unrecoverable? → Reprovision (destructive: user data lost)
+Unrecoverable? → Reprovision (destructive: all user data, apps, and settings erased)
 ```
+
+> [!WARNING]
+> Reprovision permanently deletes the user's Cloud PC, including all local data, apps, and customizations, and the user receives a new Cloud PC, often with a new device name. Data stored in OneDrive or other cloud services isn't affected. Notify the user, confirm that critical data is backed up, and reserve reprovisioning for issues that can't be resolved by less disruptive actions. See [Reprovision a Cloud PC](https://learn.microsoft.com/windows-365/enterprise/reprovision-cloud-pc).
 
 ### Proactive remediation with Intune
 
@@ -608,7 +611,10 @@ The Windows 365 connector for Power Platform and Azure Logic Apps enables low-co
 
 ## Operational runbook template
 
-Use this template to document procedures for your operations team:
+> [!IMPORTANT]
+> These runbooks are illustrative templates, not Microsoft-published procedures. They sequence the documented Windows 365 capabilities referenced under each runbook into an example workflow. Adapt them to your organization's change management, approval, and communication processes, and validate them in a test environment before use. Actions that remove data (Restore, Reprovision) should follow your organization's change approval process.
+
+Use these templates as a starting point for documenting procedures for your operations team:
 
 ### Incident: Cloud PCs not available
 
@@ -619,9 +625,11 @@ Use this template to document procedures for your operations team:
 | 3 | Run **Troubleshoot** action on affected devices | Remote actions (bulk supported) |
 | 4 | Review health check results | Cloud PC > Overview > Troubleshoot |
 | 5 | If ANC-related: check Azure Network Connection health | Provisioning > Azure network connections |
-| 6 | If persistent: create manual restore point, then Restore | Remote actions |
-| 7 | If unrecoverable: Reprovision (coordinate with user) | Remote actions |
+| 6 | If persistent: create a manual restore point to preserve the current state, then Restore to an earlier point. Changes made after the selected restore point are lost; confirm with the user first. | Remote actions |
+| 7 | **Last resort**: Reprovision. This is destructive: all user data, apps, and settings on the Cloud PC are deleted and a new Cloud PC is built. Before proceeding, obtain user and change approval, confirm user data is in OneDrive or other cloud storage, and consider preserving the current state with **Share restore point to storage** or **Place under review**. | Remote actions |
 | 8 | Document root cause and resolution | ITSM tool |
+
+*Based on: [Alerts](https://learn.microsoft.com/windows-365/enterprise/alerts), [Admin Insights](https://learn.microsoft.com/windows-365/enterprise/admin-insights), [Connectivity health checks](https://learn.microsoft.com/windows-365/enterprise/health-checks-connectivity), [Azure Network Connection health checks](https://learn.microsoft.com/troubleshoot/windows-365/health-checks), [Point-in-time restore](https://learn.microsoft.com/windows-365/enterprise/restore-overview), [Reprovision a Cloud PC](https://learn.microsoft.com/windows-365/enterprise/reprovision-cloud-pc).*
 
 ### Incident: Regional outage
 
@@ -640,6 +648,11 @@ Use this template to document procedures for your operations team:
 | 11 | Review Post-Incident Report (PIR) when published in Service Health issue history | M365 Service Health > Issue history |
 | 12 | Conduct internal post-incident review; document lessons learned and any runbook updates | Operations team / ITSM tool |
 
+*Based on: [Microsoft 365 service health](https://learn.microsoft.com/microsoft-365/enterprise/view-service-health), [Service health and continuity](https://learn.microsoft.com/office365/servicedescriptions/office-365-platform-service-description/service-health-and-continuity), [Cross region disaster recovery](https://learn.microsoft.com/windows-365/enterprise/cross-region-disaster-recovery), [BCDR with Windows 365](https://learn.microsoft.com/windows-365/enterprise/business-continuity-disaster-recovery).*
+
+> [!NOTE]
+> When cross region DR is deactivated, the temporary Cloud PC is deleted and nothing saved to it is copied back to the primary Cloud PC. Advise users to save work to OneDrive while using the temporary Cloud PC.
+
 ### Incident: Performance degradation
 
 | Step | Action | Tool |
@@ -651,6 +664,8 @@ Use this template to document procedures for your operations team:
 | 5 | If resource-constrained: initiate Resize | Remote actions |
 | 6 | If network-related: evaluate client location, gateway, UDP path, and TLS inspection of RDP traffic | Connection quality report, Network config |
 | 7 | If widespread: check for service incidents | [M365 admin center](https://admin.microsoft.com) > Health > Service health |
+
+*Based on: [Cloud PC monitoring overview](https://learn.microsoft.com/windows-365/enterprise/cloud-pc-monitoring-overview), [Connection quality report](https://learn.microsoft.com/windows-365/enterprise/report-cloud-pc-connection-quality), [Resource performance report](https://learn.microsoft.com/windows-365/enterprise/report-resource-performance), [Supportability guidance](https://learn.microsoft.com/windows-365/enterprise/windows-365-deployment-guidance-supportability), [Resize a Cloud PC](https://learn.microsoft.com/windows-365/enterprise/resize-cloud-pc).*
 
 ## Monitoring cadence summary
 
